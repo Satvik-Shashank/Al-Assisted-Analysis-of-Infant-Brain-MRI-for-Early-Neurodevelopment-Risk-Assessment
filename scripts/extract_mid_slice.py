@@ -1,31 +1,29 @@
 import nibabel as nib
-import numpy as np
-import cv2
 from pathlib import Path
+from utils.image_utils import normalize_image, save_image
 
-# MRI file path
-mri_path = Path("../data/raw/sample.nii")
 
-# Output file
-output_path = Path("../data/processed/mid_slice.png")
+# Set base directory for local or Colab
+import os
+base_dir = Path(os.getcwd())
+data_dir = base_dir / "data"
+raw_dir = data_dir / "raw"
+processed_dir = data_dir / "processed"
+
+MRI_PATH = raw_dir / "sample.nii"
+OUTPUT_PATH = processed_dir / "mid_slice.png"
 
 print("Loading MRI...")
-
-# Load MRI
-img = nib.load(str(mri_path))
+img = nib.load(str(MRI_PATH))
 data = img.get_fdata()
-
 print("MRI Shape:", data.shape)
 
 # Find mid-sagittal slice
 mid_index = data.shape[0] // 2
 mid_slice = data[mid_index, :, :, 0]
 
-# Normalize image
-mid_slice = (mid_slice - np.min(mid_slice)) / (np.max(mid_slice) - np.min(mid_slice))
-mid_slice = (mid_slice * 255).astype(np.uint8)
-
-# Save image
-cv2.imwrite(str(output_path), mid_slice)
+# Normalize and save
+mid_slice = normalize_image(mid_slice)
+save_image(mid_slice, OUTPUT_PATH)
 
 print("Mid-sagittal slice saved.")

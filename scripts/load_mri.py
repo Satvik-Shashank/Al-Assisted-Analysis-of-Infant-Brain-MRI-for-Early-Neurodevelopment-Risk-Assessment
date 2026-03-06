@@ -1,10 +1,10 @@
 import os
 from pathlib import Path
-
 import nibabel as nib
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
+from utils.image_utils import normalize_image, extract_mid_sagittal_slice
 
 
 def load_mri(file_path: Path) -> np.ndarray:
@@ -21,23 +21,7 @@ def load_mri(file_path: Path) -> np.ndarray:
     return data
 
 
-def extract_mid_sagittal_slice(volume: np.ndarray) -> np.ndarray:
-    """
-    Extract the middle brain slice from a 3D MRI volume.
-    """
-
-    mid_index = volume.shape[0] // 2
-    slice_img = volume[mid_index, :, :]
-
-    return slice_img
-
-
-def normalize_image(image: np.ndarray) -> np.ndarray:
-    """
-    Normalize image intensity to 0–255 for visualization.
-    """
-
-    image = image - np.min(image)
+# ...existing code...
     image = image / np.max(image)
     image = (image * 255).astype(np.uint8)
 

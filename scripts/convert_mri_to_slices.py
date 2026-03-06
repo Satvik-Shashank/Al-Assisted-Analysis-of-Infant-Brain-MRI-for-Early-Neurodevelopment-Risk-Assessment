@@ -1,33 +1,32 @@
 import nibabel as nib
-import numpy as np
-import cv2
 from pathlib import Path
+from utils.image_utils import normalize_image, save_image
+
+
+# Set base directory for local or Colab
+import os
+base_dir = Path(os.getcwd())
+data_dir = base_dir / "data"
+raw_dir = data_dir / "raw"
+processed_dir = data_dir / "processed"
+slices_dir = processed_dir / "slices"
+slices_dir.mkdir(parents=True, exist_ok=True)
 
 # Path to MRI file
-mri_path = Path("../data/raw/sample.nii")
-
-# Output folder
-output_folder = Path("../data/processed/slices")
-output_folder.mkdir(parents=True, exist_ok=True)
+mri_path = raw_dir / "sample.nii"
 
 print("Loading MRI file...")
-
 # Load MRI
 img = nib.load(str(mri_path))
 data = img.get_fdata()
-
 print("MRI Shape:", data.shape)
+
 
 # Loop through slices
 for i in range(data.shape[2]):
     slice_img = data[:, :, i, 0]
-    
-    # Normalize slice
-    slice_img = (slice_img - np.min(slice_img)) / (np.max(slice_img) - np.min(slice_img))
-    slice_img = (slice_img * 255).astype(np.uint8)
-
-    # Save slice
-    output_file = output_folder / f"slice_{i}.png"
-    cv2.imwrite(str(output_file), slice_img)
+    slice_img = normalize_image(slice_img)
+    output_file = slices_dir / f"slice_{i}.png"
+    save_image(slice_img, output_file)
 
 print("All slices saved successfully.")

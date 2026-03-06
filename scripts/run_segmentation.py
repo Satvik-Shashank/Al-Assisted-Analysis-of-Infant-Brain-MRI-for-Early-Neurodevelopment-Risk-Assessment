@@ -1,22 +1,29 @@
+
 import sys
 from pathlib import Path
+import os
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 import torch
 import cv2
 import numpy as np
-from pathlib import Path
 
 from models.unet_segmentation import UNet
 
+# Set base directory for local or Colab
+base_dir = Path(os.getcwd())
+data_dir = base_dir / "data"
+processed_dir = data_dir / "processed"
+results_dir = base_dir / "results"
+results_dir.mkdir(parents=True, exist_ok=True)
 
 # Path to processed MRI slice
-image_path = Path("../data/processed/mid_slice.png")
+image_path = processed_dir / "mid_slice.png"
 
 # Load image
 image = cv2.imread(str(image_path), cv2.IMREAD_GRAYSCALE)
 
 if image is None:
-    raise FileNotFoundError("Processed MRI slice not found.")
+    raise FileNotFoundError(f"Processed MRI slice not found: {image_path}")
 
 # Resize for model
 image = cv2.resize(image, (256, 256))
@@ -49,8 +56,6 @@ mask = (mask * 255).astype(np.uint8)
 
 
 # Save mask
-output_path = Path("../data/processed/segmentation_mask.png")
-
+output_path = results_dir / "segmentation_mask.png"
 cv2.imwrite(str(output_path), mask)
-
-print("Segmentation mask saved.")
+print(f"Segmentation mask saved to results folder: {output_path}")
