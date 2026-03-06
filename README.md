@@ -4,12 +4,12 @@
 
 ```mermaid
 graph TD
-  A[MRI (.nii)] --> B[Preprocessing]
-  B --> C[Slice Extraction]
-  C --> D[Mid-Sagittal Slice]
-  D --> E[U-Net Segmentation]
-  E --> F[Segmentation Mask]
-  F --> G[Overlay Visualization]
+A[MRI NII File] --> B[Preprocessing]
+B --> C[Convert MRI Volume to Slices]
+C --> D[Extract Mid Sagittal Slice]
+D --> E[UNet Segmentation]
+E --> F[Corpus Callosum Mask]
+F --> G[Segmentation Overlay Visualization]
 ```
 
 ## Overview
